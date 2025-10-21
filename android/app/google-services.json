@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "110656260145",
+    "project_id": "udemyfirebaseex",
+    "storage_bucket": "udemyfirebaseex.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:110656260145:android:bd715df7389ce07f85ad10",
+        "android_client_info": {
+          "package_name": "com.example.firebase_ex"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD54zW-yrkqUlxVk45tEk-W-rjEEZybBaI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
