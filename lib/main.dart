@@ -7,9 +7,7 @@ import 'FireStore/firestore_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
 }
 
@@ -66,7 +64,6 @@ class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
   void _incrementCounter() {
-
     FireStoreService fireStoreService = FireStoreService();
     // Create a new user with a first and last name
     // final user = <String, dynamic>{
@@ -77,8 +74,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // fireStoreService.addData(user);
 
     // fireStoreService.searchUser("Ada");
-    fireStoreService.updateUser("Ada"
-        ,'Ahmed');
+    fireStoreService.updateUser("Ada", 'Ahmed');
 
     fireStoreService.getAllUsers();
     setState(() {
@@ -93,7 +89,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-
     // FireStoreService().getAllUsers();
     // FireStoreService().deleteUser();
     // FireStoreService().searchUser('Ada');
@@ -114,32 +109,31 @@ class _MyHomePageState extends State<MyHomePage> {
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
+      body: StreamBuilder(
+        stream: FireStoreService().db.collection('users').snapshots(),
+        builder: (context, snapshot) {
+          if(snapshot.connectionState == ConnectionState.waiting){
+            return const Center(child: CircularProgressIndicator(color: Colors.deepPurple,),);
+          }
+          if(snapshot.hasError){
+            return const Center(child: Text('There is no data'),);
+          }
+          if(snapshot.hasData){
+            return ListView.builder(
+              itemCount:snapshot.data!.docs.length ,
+              itemBuilder: (context,index){
+                return ListTile(
+                  title: Text(snapshot.data!.docs[index]['first'].toString()  + snapshot.data!.docs[index]['last'].toString()),
+                  subtitle: Text(snapshot.data!.docs[index]['born'].toString()),
+                );
+              },
+            );
+          }
+
+
+          return Container();
+
+        },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
