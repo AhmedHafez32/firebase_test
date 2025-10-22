@@ -1,13 +1,23 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_ex/firebase_options.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 
 import 'FireStore/firestore_service.dart';
 
+final remoteConfig = FirebaseRemoteConfig.instance;
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+
+
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  await remoteConfig.setConfigSettings(RemoteConfigSettings(
+    fetchTimeout: const Duration(minutes: 1),
+    minimumFetchInterval: Duration.zero,
+  ));
   runApp(const MyApp());
 }
 
@@ -63,6 +73,10 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
+  String baseURL = '';
+  
+  Color color = Colors.white;
+
   void _incrementCounter() {
     FireStoreService fireStoreService = FireStoreService();
     // Create a new user with a first and last name
@@ -88,6 +102,25 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   @override
+  void initState(){
+    getRemoteConfig();
+    super.initState();
+  }
+
+  getRemoteConfig()async{
+
+   await remoteConfig.fetchAndActivate();
+   setState(() {
+     baseURL=remoteConfig.getString('baseURL');
+     
+     String colorString = remoteConfig.getString('backgroundColor');
+
+     color = Color(int.parse('FF$colorString',radix: 8));
+   });
+   
+  }
+
+  @override
   Widget build(BuildContext context) {
     // FireStoreService().getAllUsers();
     // FireStoreService().deleteUser();
@@ -100,6 +133,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
+      backgroundColor: color,
       appBar: AppBar(
         // TRY THIS: Try changing the color here to a specific color (to
         // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
@@ -109,31 +143,40 @@ class _MyHomePageState extends State<MyHomePage> {
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      body: StreamBuilder(
-        stream: FireStoreService().db.collection('users').snapshots(),
-        builder: (context, snapshot) {
-          if(snapshot.connectionState == ConnectionState.waiting){
-            return const Center(child: CircularProgressIndicator(color: Colors.deepPurple,),);
-          }
-          if(snapshot.hasError){
-            return const Center(child: Text('There is no data'),);
-          }
-          if(snapshot.hasData){
-            return ListView.builder(
-              itemCount:snapshot.data!.docs.length ,
-              itemBuilder: (context,index){
-                return ListTile(
-                  title: Text(snapshot.data!.docs[index]['first'].toString()  + snapshot.data!.docs[index]['last'].toString()),
-                  subtitle: Text(snapshot.data!.docs[index]['born'].toString()),
-                );
+      body: Column(
+
+        children: [
+
+          Text(baseURL),
+          Expanded(
+            child: StreamBuilder(
+              stream: FireStoreService().db.collection('users').snapshots(),
+              builder: (context, snapshot) {
+                if(snapshot.connectionState == ConnectionState.waiting){
+                  return const Center(child: CircularProgressIndicator(color: Colors.deepPurple,),);
+                }
+                if(snapshot.hasError){
+                  return const Center(child: Text('There is no data'),);
+                }
+                if(snapshot.hasData){
+                  return ListView.builder(
+                    itemCount:snapshot.data!.docs.length ,
+                    itemBuilder: (context,index){
+                      return ListTile(
+                        title: Text(snapshot.data!.docs[index]['first'].toString()  + snapshot.data!.docs[index]['last'].toString()),
+                        subtitle: Text(snapshot.data!.docs[index]['born'].toString()),
+                      );
+                    },
+                  );
+                }
+
+
+                return Container();
+
               },
-            );
-          }
-
-
-          return Container();
-
-        },
+            ),
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
