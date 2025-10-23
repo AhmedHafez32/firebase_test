@@ -12,7 +12,20 @@ void main() async {
 
 
 
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+ // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  await Firebase.initializeApp(
+    options: const FirebaseOptions(
+      apiKey: "AIzaSyAKByLyNqZehGxs_vv59cY4t4ZnRVLaX28",
+      authDomain: "udemyfirebaseex.firebaseapp.com",
+      projectId: "udemyfirebaseex",
+      storageBucket: "udemyfirebaseex.firebasestorage.app",
+      messagingSenderId: "110656260145",
+      appId: "1:110656260145:web:926e9ff4e7cdd72f85ad10",
+      measurementId: "G-7KBL1373GX",
+    ),
+  );
+
 
   await remoteConfig.setConfigSettings(RemoteConfigSettings(
     fetchTimeout: const Duration(minutes: 1),
@@ -88,9 +101,11 @@ class _MyHomePageState extends State<MyHomePage> {
     // fireStoreService.addData(user);
 
     // fireStoreService.searchUser("Ada");
-    fireStoreService.updateUser("Ada", 'Ahmed');
+   // fireStoreService.updateUser("Ada", 'Ahmed');
 
-    fireStoreService.getAllUsers();
+    //fireStoreService.signIN('ahmedhafez@gmail.com', "password333");
+
+    //fireStoreService.getAllUsers();
     setState(() {
       // This call to setState tells the Flutter framework that something has
       // changed in this State, which causes it to rerun the build method below
@@ -104,6 +119,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState(){
     getRemoteConfig();
+    FireStoreService().checkState();
     super.initState();
   }
 
@@ -125,6 +141,14 @@ class _MyHomePageState extends State<MyHomePage> {
     // FireStoreService().getAllUsers();
     // FireStoreService().deleteUser();
     // FireStoreService().searchUser('Ada');
+
+
+
+    //FireStoreService().signIN('ahmedhafez@gmail.com', "password333");
+
+   FireStoreService().signOut();
+
+
 
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
