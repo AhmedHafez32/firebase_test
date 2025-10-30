@@ -1,9 +1,10 @@
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_ex/firebase_options.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 
 import 'FireStore/firestore_service.dart';
+import 'firebase_messaging_config.dart';
+import 'firebase_options.dart';
 
 final remoteConfig = FirebaseRemoteConfig.instance;
 
@@ -12,19 +13,21 @@ void main() async {
 
 
 
- // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  await Firebase.initializeApp(
-    options: const FirebaseOptions(
-      apiKey: "AIzaSyAKByLyNqZehGxs_vv59cY4t4ZnRVLaX28",
-      authDomain: "udemyfirebaseex.firebaseapp.com",
-      projectId: "udemyfirebaseex",
-      storageBucket: "udemyfirebaseex.firebasestorage.app",
-      messagingSenderId: "110656260145",
-      appId: "1:110656260145:web:926e9ff4e7cdd72f85ad10",
-      measurementId: "G-7KBL1373GX",
-    ),
-  );
+  FirebaseMessagingConfig().configFirebaseMessaging();
+
+  // await Firebase.initializeApp(
+  //   options: const FirebaseOptions(
+  //     apiKey: "AIzaSyAKByLyNqZehGxs_vv59cY4t4ZnRVLaX28",
+  //     authDomain: "udemyfirebaseex.firebaseapp.com",
+  //     projectId: "udemyfirebaseex",
+  //     storageBucket: "udemyfirebaseex.firebasestorage.app",
+  //     messagingSenderId: "110656260145",
+  //     appId: "1:110656260145:web:926e9ff4e7cdd72f85ad10",
+  //     measurementId: "G-7KBL1373GX",
+  //   ),
+  // );
 
 
   await remoteConfig.setConfigSettings(RemoteConfigSettings(
@@ -146,7 +149,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     //FireStoreService().signIN('ahmedhafez@gmail.com', "password333");
 
-   FireStoreService().signOut();
+   //FireStoreService().signOut();
 
 
 
